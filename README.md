@@ -1,3 +1,13 @@
-# Northcoders News API
+# Andras News API
 
-For instructions, please head over to [L2C NC News](https://l2c.northcoders.com/courses/be/nc-news).
+In order to successfully connect to the two databases locally you will need to create 2 environment variables files (one for dev and one for testing):
+
+.env.development
+.env.test
+
+Each file should contain: 
+
+PGDATABASE=database_name_here   (with the relevant database names, found in setup.sql). 
+
+
+
