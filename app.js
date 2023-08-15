@@ -1,0 +1,28 @@
+const express = require("express");
+const {getHealthCheck} = require('../be-nc-news/controllers/healthCheck.controllers')
+const {getTopics} = require('../be-nc-news/controllers/topics.controllers');
+const { handle400s, handleCustomErrors } = require("./controllers/errors.controllers");
+const app = express();
+
+app.get('/api/healthcheck', getHealthCheck);
+
+app.get('/api/topics', getTopics);
+
+app.use((_, response) => {
+    response.status(404).send({ msg : 'Bad Request'})
+});
+
+app.use(handle400s);
+
+app.use(handleCustomErrors);
+
+app.use((err, request, response, next) => {
+    response.status(500).send({ msg : 'Internal Server Error'})
+});
+
+
+module.exports = app;
+
+
+
+
