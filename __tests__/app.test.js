@@ -39,15 +39,32 @@ describe('app', () => {
                 });
             });
         });
+    });
+    describe('/api', () => {
+        test('200: responds with an object with all the endpoints available described', () => {
+            return request(app)
+            .get('/api')
+            .expect(200)
+            .then(({body}) => {
+                const endpoints = body;
+                for (let key in endpoints){
+                    expect(key).toContain('GET /api');
+                };
+            });
+
+        });
+    });
+
+
+    describe(('Path is incorrect'), () => {
         test('404 : returns an error message if path is incorrect', () => {
             return request(app)
             .get('/api/topics123')
             .expect(404)
             .then(({body}) => {
                 const  {msg} = body;
-                expect(msg).toBe('Bad Request');
+                expect(msg).toBe('Not found');
             });
         });
     });
-
 });

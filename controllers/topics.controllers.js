@@ -1,8 +1,7 @@
 const {readTopics} = require('../models/topics.models')
 
 const getTopics = (request, response, next) => {
-    const path = request.originalUrl;
-    readTopics(path)
+    readTopics()
     .then((topics) => {
         response.status(200).send({ topics });
     })
