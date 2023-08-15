@@ -49,5 +49,17 @@ describe('app', () => {
             });
         });
     });
+    describe('/api/articles/:article_id', () => {
+        test('200 : responds with an article object', () => {
+            return request(app)
+            .get('/api/articles/1')
+            .expect(200)
+            .then((response) => {
+                console.log(response.body);
+                const articleTitle = 'Living in the shadow of a great man'
+                expect(response.body.title).toEqual(articleTitle);
+            });
+        });
+    });
 
 });
