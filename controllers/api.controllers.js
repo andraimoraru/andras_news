@@ -1,7 +1,7 @@
-const {readApi} = require('../models/api.models');
+const fs = require("fs/promises");
 
 const getApi = (request, response, next) => {
-    readApi()
+    return fs.readFile('./endpoints.json', 'utf-8')
     .then((data) => {
         const endpoints = JSON.parse(data);
         response.status(200).send(endpoints);

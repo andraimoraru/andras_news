@@ -55,7 +55,6 @@ describe('app', () => {
         });
     });
 
-
     describe(('Path is incorrect'), () => {
         test('404 : returns an error message if path is incorrect', () => {
             return request(app)
