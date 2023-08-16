@@ -48,7 +48,17 @@ describe('app', () => {
             .then(({body}) => {
                 const endpoints = body;
                 for (let key in endpoints){
-                    expect(key).toContain('GET /api');
+                    if (key !== 'GET /api'){
+                        expect(key).toContain('GET /api');
+                        expect(endpoints[key]).toHaveProperty("description");
+                        expect(endpoints[key]).toHaveProperty("queries");
+                        expect(endpoints[key]).toHaveProperty("exampleResponse");                      expect(key.description).not.toBe(null);
+                        expect(key.queries).not.toBe(null);
+                        expect(key.exampleResponse).not.toBe(null);
+                        expect(key.description).toBe(expect.any.String);
+                        expect(key.queries).toBe(expect.any.Array);
+                        expect(key.exampleResponse).toBe(expect.toHaveProperty);
+                    };
                 };
             });
 
