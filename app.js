@@ -11,10 +11,6 @@ app.get('/api/topics', getTopics);
 
 app.get('/api/articles/:article_id', getArticles)
 
-app.use((_, response) => {
-    response.status(404).send({ msg : 'Bad Request'})
-});
-
 app.use(handle400s);
 
 app.use(handleCustomErrors);
@@ -23,6 +19,9 @@ app.use((err, request, response, next) => {
     response.status(500).send({ msg : 'Internal Server Error'})
 });
 
+app.use((_, response) => {
+    response.status(404).send({ msg : 'Bad Request'})
+});
 
 module.exports = app;
 

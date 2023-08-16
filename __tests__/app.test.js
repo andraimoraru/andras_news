@@ -79,6 +79,7 @@ describe('app', () => {
                 expect(response.body.article_img_url).toEqual('https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700');
             });
         });
+
         test('400 : returns an error message if id is invalid', () => {
             return request(app)
             .get('/api/articles/banana')
@@ -86,6 +87,15 @@ describe('app', () => {
             .then(({body}) => {
                 const  {msg} = body;
                 expect(msg).toBe('Invalid id');
+            });
+        });
+        test('404 : returns an error message if id is not found', () => {
+            return request(app)
+            .get('/api/articles/900')
+            .expect(404)
+            .then(({body}) => {
+                const  {msg} = body;
+                expect(msg).toBe('Not found');
             });
         });
 
