@@ -5,7 +5,9 @@ const getArticles = (request, response,next) => {
     readArticlesById(article_id)
     .then((article) => {
         response.status(200).send(article)
+    })
+    .catch((err) => {
+        next(err);
     });
-
 };
 module.exports = {getArticles};
