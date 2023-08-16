@@ -39,15 +39,41 @@ describe('app', () => {
                 });
             });
         });
+    });
+    describe('/api', () => {
+        test('200: responds with an object with all the endpoints available described', () => {
+            return request(app)
+            .get('/api')
+            .expect(200)
+            .then(({body}) => {
+                const endpoints = body;
+                for (let key in endpoints){
+                    if (key !== 'GET /api'){
+                        expect(key).toContain('GET /api');
+                        expect(endpoints[key]).toHaveProperty("description");
+                        expect(endpoints[key]).toHaveProperty("queries");
+                        expect(endpoints[key]).toHaveProperty("exampleResponse");                      expect(key.description).not.toBe(null);
+                        expect(key.queries).not.toBe(null);
+                        expect(key.exampleResponse).not.toBe(null);
+                        expect(key.description).toBe(expect.any.String);
+                        expect(key.queries).toBe(expect.any.Array);
+                        expect(key.exampleResponse).toBe(expect.toHaveProperty);
+                    };
+                };
+            });
+
+        });
+    });
+
+    describe(('Path is incorrect'), () => {
         test('404 : returns an error message if path is incorrect', () => {
             return request(app)
             .get('/api/topics123')
             .expect(404)
             .then(({body}) => {
                 const  {msg} = body;
-                expect(msg).toBe('Bad Request');
+                expect(msg).toBe('Not found');
             });
         });
     });
-
 });
