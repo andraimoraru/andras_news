@@ -13,6 +13,7 @@ beforeEach(() => {
 });
 
 describe('app', () => {
+    
     describe('/api/healthcheck', () => {
         test('200 : responds with a status of 200', () => {
             return request(app)
@@ -24,6 +25,7 @@ describe('app', () => {
             });
         });
     });
+
     describe('/api/topics', () => {
         test('200 : responds with an array of topic objects', () => {
             return request(app)
@@ -40,6 +42,7 @@ describe('app', () => {
             });
         });
     });
+
     describe('/api', () => {
         test('200: responds with an object with all the endpoints available described', () => {
             return request(app)
@@ -52,23 +55,69 @@ describe('app', () => {
                         expect(key).toContain('GET /api');
                         expect(endpoints[key]).toHaveProperty("description");
                         expect(endpoints[key]).toHaveProperty("queries");
-                        expect(endpoints[key]).toHaveProperty("exampleResponse");                      expect(key.description).not.toBe(null);
+                        expect(endpoints[key]).toHaveProperty("exampleResponse");                      
+                        expect(key.description).not.toBe(null);
                         expect(key.queries).not.toBe(null);
                         expect(key.exampleResponse).not.toBe(null);
                         expect(key.description).toBe(expect.any.String);
                         expect(key.queries).toBe(expect.any.Array);
                         expect(key.exampleResponse).toBe(expect.toHaveProperty);
+                        };
                     };
-                };
+                });
             });
-
         });
+
+
+    describe('/api/articles', () => {
+        test('200 : responds with an array of articles objects with given properties', () => {
+            return request(app)
+            .get('/api/articles')
+            .expect(200)
+            .then(({body}) => {
+                const { articles } = body;
+                expect(articles).toBeInstanceOf(Array);
+                expect(articles).toHaveLength(13);
+                articles.forEach((article) => {
+                    expect(article).toHaveProperty('title', expect.any(String));
+                    expect(article).toHaveProperty('article_id', expect.any(Number));
+                    expect(article).toHaveProperty('topic', expect.any(String));
+                    expect(article).toHaveProperty('author', expect.any(String));
+                    expect(article).toHaveProperty('created_at', expect.any(String));
+                    expect(article).toHaveProperty('votes', expect.any(Number));
+                    expect(article).toHaveProperty('article_img_url', expect.any(String));
+                    expect(article).toHaveProperty('comment_count', expect.any(Number));
+                    expect(article).not.toHaveProperty('body');
+                });
+            });
+        });
+
+        test('200 : articles should be sorted by date in descending order', () => {
+            return request(app)
+            .get('/api/articles')
+            .expect(200)
+            .then(({body}) => {
+                const { articles } = body;
+                expect(articles).toBeSortedBy('created_at', { descending: true });
+            });
+        });
+
+        test('400 : bad request for invalid query property name', () => {
+            return request(app)
+            .get('/api/articles?sort_by=banana')
+            .expect(400)
+            .then(({body}) => {
+                const { msg } = body;
+                expect(msg).toBe('Bad Request');
+            });
+        });
+
     });
 
     describe(('Path is incorrect'), () => {
         test('404 : returns an error message if path is incorrect', () => {
             return request(app)
-            .get('/api/topics123')
+            .get('/api/anything')
             .expect(404)
             .then(({body}) => {
                 const  {msg} = body;
