@@ -24,6 +24,7 @@ describe('app', () => {
             });
         });
     });
+
     describe('/api/topics', () => {
         test('200 : responds with an array of topic objects', () => {
             return request(app)
@@ -40,6 +41,7 @@ describe('app', () => {
             });
         });
     });
+
     describe('/api', () => {
         test('200: responds with an object with all the endpoints available described', () => {
             return request(app)
@@ -64,20 +66,6 @@ describe('app', () => {
 
         });
     });
-
-    describe(('Path is incorrect'), () => {
-        test('404 : returns an error message if path is incorrect', () => {
-            return request(app)
-            .get('/api/topics123')
-            .expect(404)
-            .then(({body}) => {
-                const  {msg} = body;
-                expect(msg).toBe('Not found');
-            });
-        });
-    });
-
-
     
     describe('/api/articles/:article_id', () => {
         test('200 : responds with an article object with all the given properties', () => {
@@ -134,6 +122,7 @@ describe('app', () => {
                 expect(msg).toBe('Invalid id');
             });
         });
+
         test('404 : returns an error message if id is not found', () => {
             return request(app)
             .get('/api/articles/900')
@@ -146,4 +135,53 @@ describe('app', () => {
 
     });
 
+    describe('/api/articles/:article_id/comments', () => {
+        test('returns an array of comments for valid article_id',() => {
+            return request(app)
+            .get('/api/articles/1/comments')
+            .expect(200)
+            .then(({body}) => {
+                const comments = body;
+                expect(comments).toBeInstanceOf(Array);
+                comments.forEach((comment) => {
+                    expect(comment).toHaveProperty('comment_id');
+                    expect(comment).toHaveProperty('article_id');
+                    expect(comment).toHaveProperty('author');
+                    expect(comment).toHaveProperty('body');
+                    expect(comment).toHaveProperty('created_at');
+                    expect(comment).toHaveProperty('votes');
+                })
+            }); 
+        });
+        test('200: returns an empty array for valid article_id with no comments',() => {
+            return request(app)
+            .get('/api/articles/2/comments')
+            .expect(200)
+            .then(({body}) => {
+                expect(body).toEqual([])
+            }); 
+        });
+        test('400: returns an error message for an invalid article_id type',() => {
+            return request(app)
+            .get('/api/articles/cat/comments')
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toBe('Invalid id')
+            }); 
+        });
+    })
+
+
+
+    describe(('Path is incorrect'), () => {
+        test('404 : returns an error message if path is incorrect', () => {
+            return request(app)
+            .get('/api/anything')
+            .expect(404)
+            .then(({body}) => {
+                const  {msg} = body;
+                expect(msg).toBe('Bad Request');
+            });
+        });
+    });
 });
