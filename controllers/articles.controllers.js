@@ -1,6 +1,8 @@
+
 const {readArticlesById} = require('../models/articles.models');
 
 const getArticles = (request, response,next) => {
+
     const {article_id} = request.params;
     readArticlesById(article_id, next)
     .then((article) => {
@@ -15,4 +17,17 @@ const getArticles = (request, response,next) => {
         next(err);
     });
 };
-module.exports = {getArticles};
+
+const getAllArticles = (request, response, next) => {
+    const  query = request.query
+    readArticles(query)
+    .then((articles) => {
+        return response.status(200).send({articles});
+    })
+    .catch((err) => {
+        next(err);
+    });
+};
+
+module.exports = {getAllArticles, getArticles};
+
