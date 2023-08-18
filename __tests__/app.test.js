@@ -103,20 +103,6 @@ describe('app', () => {
         });
 
     });
-
-    describe(('Path is incorrect'), () => {
-        test('404 : returns an error message if path is incorrect', () => {
-            return request(app)
-            .get('/api/anything')
-            .expect(404)
-            .then(({body}) => {
-                const  {msg} = body;
-                expect(msg).toBe('Not found');
-            });
-        });
-    });
-
-
     
     describe('/api/articles/:article_id', () => {
         test('200 : responds with an article object with all the given properties', () => {
@@ -183,6 +169,19 @@ describe('app', () => {
             });
         });
 
+    });
+
+
+    describe(('Path is incorrect'), () => {
+        test('404 : returns an error message if path is incorrect', () => {
+            return request(app)
+            .get('/api/anything')
+            .expect(404)
+            .then(({body}) => {
+                const  {msg} = body;
+                expect(msg).toBe('Not found');
+            });
+        });
     });
 
 });

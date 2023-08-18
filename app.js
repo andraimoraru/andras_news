@@ -4,7 +4,6 @@ const {getApi} = require("./controllers/api.controllers")
 const {getTopics} = require('./controllers/topics.controllers');
 const {getAllArticles, getArticles} = require('./controllers/articles.controllers')
 const { handle400s, handleCustomErrors } = require("./controllers/errors.controllers");
-const { getArticles } = require("./controllers/articles.controllers");
 const app = express();
 
 app.get('/api', getApi);
@@ -22,6 +21,7 @@ app.use(handle400s);
 app.use(handleCustomErrors);
 
 app.use((err, request, response, next) => {
+    console.log(err);
     response.status(500).send({ msg : 'Internal Server Error'})
 });
 

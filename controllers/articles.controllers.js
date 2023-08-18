@@ -1,5 +1,5 @@
 
-const {readArticlesById} = require('../models/articles.models');
+const {readArticlesById, readArticles} = require('../models/articles.models');
 
 const getArticles = (request, response,next) => {
 
