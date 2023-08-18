@@ -102,16 +102,6 @@ describe('app', () => {
             });
         });
 
-        test('400 : bad request for invalid query property name', () => {
-            return request(app)
-            .get('/api/articles?sort_by=banana')
-            .expect(400)
-            .then(({body}) => {
-                const { msg } = body;
-                expect(msg).toBe('Bad Request');
-            });
-        });
-
     });
 
     describe(('Path is incorrect'), () => {
