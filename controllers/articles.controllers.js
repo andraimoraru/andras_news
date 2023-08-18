@@ -1,4 +1,5 @@
-const {readArticles, readArticlesById} = require('../models/articles.models');
+
+const {readArticlesById} = require('../models/articles.models');
 
 const getArticles = (request, response,next) => {
 
@@ -29,3 +30,4 @@ const getAllArticles = (request, response, next) => {
 };
 
 module.exports = {getAllArticles, getArticles};
+

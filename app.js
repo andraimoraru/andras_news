@@ -4,6 +4,7 @@ const {getApi} = require("./controllers/api.controllers")
 const {getTopics} = require('./controllers/topics.controllers');
 const {getAllArticles, getArticles} = require('./controllers/articles.controllers')
 const { handle400s, handleCustomErrors } = require("./controllers/errors.controllers");
+const { getArticles } = require("./controllers/articles.controllers");
 const app = express();
 
 app.get('/api', getApi);
