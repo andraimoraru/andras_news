@@ -45,8 +45,23 @@ const selectCommentsByArticleId = (article_id) => {
     });
 };
 
+const insertCommentsByArticleId = (article_id, username, body, next) => {
+    return db.query(
+        `INSERT INTO comments (article_id, author, body)
+        VALUES ($1, $2, $3)
+        RETURNING *;`,
+        [article_id, username, body])
+    .then(({ rows }) => {
+        return rows[0];
+    })
+    .catch((err) => {
+        next(err);
+    })
+
+};
 
 
-module.exports = {readArticles, readArticlesById, selectCommentsByArticleId};
+
+module.exports = {readArticles, readArticlesById, selectCommentsByArticleId, insertCommentsByArticleId};
 
 

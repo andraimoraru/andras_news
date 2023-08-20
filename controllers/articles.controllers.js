@@ -1,5 +1,5 @@
 
-const {readArticlesById, readArticles, selectCommentsByArticleId} = require('../models/articles.models');
+const {readArticlesById, readArticles, selectCommentsByArticleId, insertCommentsByArticleId} = require('../models/articles.models');
 
 const getArticles = (request, response,next) => {
 
@@ -57,7 +57,20 @@ const getCommentsByArticleId = (request, response, next) => {
 
 };
 
+const postCommentsByArticleId = (request, response, next) => {
+    const { article_id } = request.params;  
+    const { username, body } = request.body; 
+    insertCommentsByArticleId( article_id, username, body,  next)
+    .then((comment) => {
+        response.status(201).send({comment})
+    })
+    .catch((err) => {
+        next(err);
+    })
+
+}
 
 
-module.exports = {getAllArticles, getArticles, getCommentsByArticleId};
+
+module.exports = {getAllArticles, getArticles, getCommentsByArticleId, postCommentsByArticleId};
 

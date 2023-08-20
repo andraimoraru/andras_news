@@ -3,10 +3,12 @@ const { getHealthCheck } = require('./controllers/healthCheck.controllers')
 const { getApi } = require("./controllers/api.controllers")
 const { getTopics } = require('./controllers/topics.controllers');
 const { handle400s, handleCustomErrors } = require("./controllers/errors.controllers");
-const { getArticles, getAllArticles, getCommentsByArticleId } = require("./controllers/articles.controllers");
+const { getArticles, getAllArticles, getCommentsByArticleId, postCommentsByArticleId } = require("./controllers/articles.controllers");
 
 
 const app = express();
+
+app.use(express.json());
 
 app.get('/api', getApi);
 
@@ -18,7 +20,9 @@ app.get('/api/articles/:article_id', getArticles);
 
 app.get('/api/articles/:article_id/comments', getCommentsByArticleId);
 
-app.get('/api/articles', getAllArticles)
+app.get('/api/articles', getAllArticles);
+
+app.post('/api/articles/:article_id/comments', postCommentsByArticleId);
 
 
 app.use(handle400s);

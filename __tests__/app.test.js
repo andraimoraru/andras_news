@@ -223,6 +223,24 @@ describe('app', () => {
         });
     });
 
+    describe(('POST'), () => {
+        test('201 : returns the posted comment', () => {
+            return request(app)
+            .post('/api/articles/1/comments')
+            .send({username: 'butter_bridge', body : 'This is a comment'})
+            .expect(201)
+            .then(({body}) => {
+                expect(body.comment).toMatchObject({
+                    comment_id: expect.any(Number),
+                    author: "butter_bridge",
+                    body: 'This is a comment',
+                    article_id: 1,
+                    votes: expect.any(Number),
+                    created_at: expect.any(String)
+                });
+            });
+        });
+    });
 
 
     describe(('Path is incorrect'), () => {
