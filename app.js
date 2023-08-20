@@ -3,7 +3,7 @@ const { getHealthCheck } = require('./controllers/healthCheck.controllers')
 const { getApi } = require("./controllers/api.controllers")
 const { getTopics } = require('./controllers/topics.controllers');
 const { handle400s, handleCustomErrors } = require("./controllers/errors.controllers");
-const { getArticles, getCommentsByArticleId } = require("./controllers/articles.controllers");
+const { getArticles, getAllArticles, getCommentsByArticleId } = require("./controllers/articles.controllers");
 
 
 const app = express();
