@@ -3,7 +3,7 @@ const {readArticlesById, selectCommentsByArticleId} = require('../models/article
 const getArticles = (request, response,next) => {
     
     const {article_id} = request.params;
-    if (!article_id) {
+    if (article_id === undefined) {
         return response.status(404).send({status: 404, msg : 'Not found'});
     };
     readArticlesById(article_id, next)
@@ -21,12 +21,21 @@ const getArticles = (request, response,next) => {
 
 const getCommentsByArticleId = (request, response, next) => {
 
-    const { article_id } = request.params;
-    if (article_id === undefined) return response.status(404).send({status: 404, msg : 'Not found'});
+    let { article_id } = request.params;
+    article_id = +article_id
+    if (article_id > 0) {
+        readArticlesById(article_id).then(res => {
+            if (res === undefined) {
+                return response.status(404).send({status: 404, msg: 'Not found'})
+            }
+        })
+    } else {
+        return response.status(400).send({status: 400, msg: 'Invalid id'})
+    }
+
     selectCommentsByArticleId(article_id, next)
-    .then((comments) => {
-        if (comments.length === 0) return response.status(400).send({status: 400, msg : 'Invalid id'});
-        else return response.status(200).send(comments);      
+    .then((comments) => {    
+        return response.status(200).send(comments);      
     })
     .catch((err) => {
         next(err);

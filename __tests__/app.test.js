@@ -171,13 +171,12 @@ describe('app', () => {
                 expect(body.msg).toBe('Invalid id')
             }); 
         });
-        test.only('404: returns an error message for a non-existent article_id',() => {
+        test('404: returns an error message for a non-existent article_id',() => {
             return request(app)
             .get('/api/articles/999/comments')
             .expect(404)
             .then(({body}) => {
-                console.log(body);
-                expect(body.msg).toBe('Article not found')
+                expect(body.msg).toBe('Not found')
             }); 
         });
     })
