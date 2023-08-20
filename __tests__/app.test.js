@@ -136,13 +136,15 @@ describe('app', () => {
     });
 
     describe('/api/articles/:article_id/comments', () => {
-        test('returns an array of comments for valid article_id',() => {
+        test('returns an array of comments for valid article_id, ordered by date descending',() => {
             return request(app)
             .get('/api/articles/1/comments')
             .expect(200)
             .then(({body}) => {
                 const comments = body;
                 expect(comments).toBeInstanceOf(Array);
+                expect(comments).toHaveLength(11);
+                expect(comments).toBeSortedBy('created_at', { descending: true });
                 comments.forEach((comment) => {
                     expect(comment).toHaveProperty('comment_id');
                     expect(comment).toHaveProperty('article_id');
@@ -167,6 +169,15 @@ describe('app', () => {
             .expect(400)
             .then(({body}) => {
                 expect(body.msg).toBe('Invalid id')
+            }); 
+        });
+        test.only('404: returns an error message for a non-existent article_id',() => {
+            return request(app)
+            .get('/api/articles/999/comments')
+            .expect(404)
+            .then(({body}) => {
+                console.log(body);
+                expect(body.msg).toBe('Article not found')
             }); 
         });
     })
