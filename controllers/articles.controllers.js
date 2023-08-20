@@ -1,5 +1,5 @@
 
-const {readArticlesById, readArticles, selectCommentsByArticleId, insertCommentsByArticleId} = require('../models/articles.models');
+const {readArticlesById, readArticles, selectCommentsByArticleId, insertCommentsByArticleId, updateArticleVotes} = require('../models/articles.models');
 const {readAllUsers} = require('../models/users.models');
 
 const getArticles = (request, response,next) => {
@@ -86,9 +86,23 @@ const postCommentsByArticleId = (request, response, next) => {
         next(err);
     })
 
+};
+
+const patchArticleVotes = (request, response, next) => {
+
+    const { article_id } = request.params;
+    let { inc_votes } = request.body;
+    inc_votes = +inc_votes;
+    updateArticleVotes(article_id, inc_votes)
+        .then((article) => {
+            response.status(200).send({ article });
+        })
+        .catch((err) => {
+            next(err);
+        });
+
 }
 
 
-
-module.exports = {getAllArticles, getArticles, getCommentsByArticleId, postCommentsByArticleId};
+module.exports = {getAllArticles, getArticles, getCommentsByArticleId, postCommentsByArticleId, patchArticleVotes};
 

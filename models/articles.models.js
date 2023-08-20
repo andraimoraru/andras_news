@@ -1,4 +1,5 @@
 const db = require('../db/connection');
+const format = require('pg-format');
 
 const readArticlesById = (article_id) => {
     return db.query(`SELECT * FROM articles WHERE article_id = $1`, [article_id])
@@ -42,7 +43,7 @@ const selectCommentsByArticleId = (article_id) => {
     });
 };
 
-const insertCommentsByArticleId = (article_id, username, body, next) => {
+const insertCommentsByArticleId = (article_id, username, body) => {
     return db.query(
         `INSERT INTO comments (article_id, author, body)
         VALUES ($1, $2, $3)
@@ -54,8 +55,23 @@ const insertCommentsByArticleId = (article_id, username, body, next) => {
 
 };
 
+const updateArticleVotes = (article_id, inc_votes) => {
+ 
+
+    const queryString = 
+        `UPDATE articles
+        SET votes = votes + ${inc_votes}
+        WHERE article_id = ${article_id}
+        RETURNING *;`
+   
+    return db.query(queryString)
+    .then(result => {
+        return result.rows[0];
+    });
+}
 
 
-module.exports = {readArticles, readArticlesById, selectCommentsByArticleId, insertCommentsByArticleId};
+
+module.exports = {readArticles, readArticlesById, selectCommentsByArticleId, insertCommentsByArticleId, updateArticleVotes};
 
 
