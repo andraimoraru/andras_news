@@ -223,6 +223,65 @@ describe('app', () => {
         });
     });
 
+    describe(('POST'), () => {
+        test('201 : returns the posted comment', () => {
+            return request(app)
+            .post('/api/articles/1/comments')
+            .send({username: 'butter_bridge', body : 'This is a comment'})
+            .expect(201)
+            .then(({body}) => {
+                expect(body.comment).toMatchObject({
+                    comment_id: expect.any(Number),
+                    author: "butter_bridge",
+                    body: 'This is a comment',
+                    article_id: 1,
+                    votes: expect.any(Number),
+                    created_at: expect.any(String)
+                });
+            });
+        });
+
+        test('400: if article_id is not a number', () => {
+            return request(app)
+            .post('/api/articles/banana/comments')
+            .send({username: 'butter_bridge', body : 'This is a comment'})
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toBe('Invalid id');
+            });
+        });
+
+        test('404: if article_id does not exist', () => {
+            return request(app)
+            .post('/api/articles/999/comments')
+            .send({username: 'butter_bridge', body : 'This is a comment'})
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toBe('Not found');
+            });
+        });
+
+        test('400: if required properties are missing', () => {
+            return request(app)
+            .post('/api/articles/1/comments')
+            .send({body : 'This is a comment'})
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toBe('Invalid entry');
+            });
+        });
+        test('400: if user does not exist', () => {
+            return request(app)
+            .post('/api/articles/1/comments')
+            .send({username: 'nobody', body : 'This is a comment'})
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toBe('Invalid username');
+            });
+        });
+
+
+    });
 
 
     describe(('Path is incorrect'), () => {
