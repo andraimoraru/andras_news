@@ -1,5 +1,6 @@
 
 const {readArticlesById, readArticles, selectCommentsByArticleId, insertCommentsByArticleId} = require('../models/articles.models');
+const {readAllUsers} = require('../models/users.models');
 
 const getArticles = (request, response,next) => {
 
@@ -40,13 +41,12 @@ const getCommentsByArticleId = (request, response, next) => {
     if (article_id > 0) {
         readArticlesById(article_id).then(res => {
             if (res === undefined) {
-                return response.status(404).send({status: 404, msg: 'Not found'})
-            }
-        })
+                return response.status(404).send({status: 404, msg: 'Not found'});
+            };
+        });
     } else {
-        return response.status(400).send({status: 400, msg: 'Invalid id'})
+        return response.status(400).send({status: 400, msg: 'Invalid id'});
     }
-
     selectCommentsByArticleId(article_id, next)
     .then((comments) => {    
         return response.status(200).send(comments);      
@@ -58,9 +58,27 @@ const getCommentsByArticleId = (request, response, next) => {
 };
 
 const postCommentsByArticleId = (request, response, next) => {
-    const { article_id } = request.params;  
+    let { article_id } = request.params;  
     const { username, body } = request.body; 
-    insertCommentsByArticleId( article_id, username, body,  next)
+    article_id = +article_id;
+    if (username === undefined) return response.status(400).send({status: 400, msg: 'Invalid entry'});   
+    if (article_id > 0) {
+        readArticlesById(article_id).then(res => {         
+            if (res === undefined) {
+                return response.status(404).send({status: 404, msg: 'Not found'});
+            };
+        });
+    } else {
+        return response.status(400).send({status: 400, msg: 'Invalid id'});
+    }
+    readAllUsers().then((res) => {
+        const users = [];
+        res.map((user) => {
+            users.push(user.username);
+        });
+        if (!users.includes(username)) return response.status(400).send({status: 400, msg: 'Invalid username'});
+    });
+    insertCommentsByArticleId( article_id, username, body)
     .then((comment) => {
         response.status(201).send({comment})
     })

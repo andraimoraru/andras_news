@@ -240,6 +240,47 @@ describe('app', () => {
                 });
             });
         });
+
+        test('400: if article_id is not a number', () => {
+            return request(app)
+            .post('/api/articles/banana/comments')
+            .send({username: 'butter_bridge', body : 'This is a comment'})
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toBe('Invalid id');
+            });
+        });
+
+        test('404: if article_id does not exist', () => {
+            return request(app)
+            .post('/api/articles/999/comments')
+            .send({username: 'butter_bridge', body : 'This is a comment'})
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toBe('Not found');
+            });
+        });
+
+        test('400: if required properties are missing', () => {
+            return request(app)
+            .post('/api/articles/1/comments')
+            .send({body : 'This is a comment'})
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toBe('Invalid entry');
+            });
+        });
+        test('400: if user does not exist', () => {
+            return request(app)
+            .post('/api/articles/1/comments')
+            .send({username: 'nobody', body : 'This is a comment'})
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toBe('Invalid username');
+            });
+        });
+
+
     });
 
 

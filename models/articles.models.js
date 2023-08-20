@@ -7,7 +7,7 @@ const readArticlesById = (article_id) => {
     });
 };
 
-const readArticles = (request, response, next) => {
+const readArticles = () => {
 
     return db.query(
     `SELECT 
@@ -27,9 +27,6 @@ const readArticles = (request, response, next) => {
     DESC;`)
     .then(({ rows }) => {
         return rows;
-    })
-    .catch((err) => {
-        next(err);
     });
 
 };
@@ -53,10 +50,7 @@ const insertCommentsByArticleId = (article_id, username, body, next) => {
         [article_id, username, body])
     .then(({ rows }) => {
         return rows[0];
-    })
-    .catch((err) => {
-        next(err);
-    })
+    });
 
 };
 
