@@ -5,6 +5,7 @@ const { getTopics } = require('./controllers/topics.controllers');
 const { handle400s, handleCustomErrors } = require("./controllers/errors.controllers");
 const { getArticles, getCommentsByArticleId } = require("./controllers/articles.controllers");
 
+
 const app = express();
 
 app.get('/api', getApi);
@@ -16,6 +17,8 @@ app.get('/api/topics', getTopics);
 app.get('/api/articles/:article_id', getArticles);
 
 app.get('/api/articles/:article_id/comments', getCommentsByArticleId);
+
+app.get('/api/articles', getAllArticles)
 
 
 app.use(handle400s);

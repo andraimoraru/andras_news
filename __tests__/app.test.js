@@ -13,6 +13,7 @@ beforeEach(() => {
 });
 
 describe('app', () => {
+    
     describe('/api/healthcheck', () => {
         test('200 : responds with a status of 200', () => {
             return request(app)
@@ -54,19 +55,56 @@ describe('app', () => {
                         expect(key).toContain('GET /api');
                         expect(endpoints[key]).toHaveProperty("description");
                         expect(endpoints[key]).toHaveProperty("queries");
-                        expect(endpoints[key]).toHaveProperty("exampleResponse");                      expect(key.description).not.toBe(null);
+                        expect(endpoints[key]).toHaveProperty("exampleResponse");                      
+                        expect(key.description).not.toBe(null);
                         expect(key.queries).not.toBe(null);
                         expect(key.exampleResponse).not.toBe(null);
                         expect(key.description).toBe(expect.any.String);
                         expect(key.queries).toBe(expect.any.Array);
                         expect(key.exampleResponse).toBe(expect.toHaveProperty);
+                        };
                     };
-                };
+                });
             });
-
         });
+
+
+    describe('/api/articles', () => {
+        test('200 : responds with an array of articles objects with given properties', () => {
+            return request(app)
+            .get('/api/articles')
+            .expect(200)
+            .then(({body}) => {
+                const { articles } = body;
+                expect(articles).toBeInstanceOf(Array);
+                expect(articles).toHaveLength(13);
+                articles.forEach((article) => {
+                    expect(article).toHaveProperty('title', expect.any(String));
+                    expect(article).toHaveProperty('article_id', expect.any(Number));
+                    expect(article).toHaveProperty('topic', expect.any(String));
+                    expect(article).toHaveProperty('author', expect.any(String));
+                    expect(article).toHaveProperty('created_at', expect.any(String));
+                    expect(article).toHaveProperty('votes', expect.any(Number));
+                    expect(article).toHaveProperty('article_img_url', expect.any(String));
+                    expect(article).toHaveProperty('comment_count', expect.any(Number));
+                    expect(article).not.toHaveProperty('body');
+                });
+            });
+        });
+
+        test('200 : articles should be sorted by date in descending order', () => {
+            return request(app)
+            .get('/api/articles')
+            .expect(200)
+            .then(({body}) => {
+                const { articles } = body;
+                expect(articles).toBeSortedBy('created_at', { descending: true });
+            });
+        });
+
     });
     
+  
     describe('/api/articles/:article_id', () => {
         test('200 : responds with an article object with all the given properties', () => {
             return request(app)
@@ -135,6 +173,7 @@ describe('app', () => {
 
     });
 
+  
     describe('/api/articles/:article_id/comments', () => {
         test('returns an array of comments for valid article_id, ordered by date descending',() => {
             return request(app)
@@ -155,6 +194,7 @@ describe('app', () => {
                 })
             }); 
         });
+      
         test('200: returns an empty array for valid article_id with no comments',() => {
             return request(app)
             .get('/api/articles/2/comments')
@@ -163,6 +203,7 @@ describe('app', () => {
                 expect(body).toEqual([])
             }); 
         });
+      
         test('400: returns an error message for an invalid article_id type',() => {
             return request(app)
             .get('/api/articles/cat/comments')
@@ -171,6 +212,7 @@ describe('app', () => {
                 expect(body.msg).toBe('Invalid id')
             }); 
         });
+      
         test('404: returns an error message for a non-existent article_id',() => {
             return request(app)
             .get('/api/articles/999/comments')
@@ -179,7 +221,7 @@ describe('app', () => {
                 expect(body.msg).toBe('Not found')
             }); 
         });
-    })
+    });
 
 
 
@@ -194,4 +236,5 @@ describe('app', () => {
             });
         });
     });
+  
 });

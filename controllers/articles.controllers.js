@@ -1,7 +1,8 @@
-const {readArticlesById, selectCommentsByArticleId} = require('../models/articles.models');
+
+const {readArticlesById, readArticles, selectCommentsByArticleId} = require('../models/articles.models');
 
 const getArticles = (request, response,next) => {
-    
+
     const {article_id} = request.params;
     if (article_id === undefined) {
         return response.status(404).send({status: 404, msg : 'Not found'});
@@ -18,6 +19,19 @@ const getArticles = (request, response,next) => {
         next(err);
     });
 };
+
+
+const getAllArticles = (request, response, next) => {
+    const  query = request.query
+    readArticles(query)
+    .then((articles) => {
+        return response.status(200).send({articles});
+    })
+    .catch((err) => {
+        next(err);
+    });
+};
+
 
 const getCommentsByArticleId = (request, response, next) => {
 
@@ -43,4 +57,7 @@ const getCommentsByArticleId = (request, response, next) => {
 
 };
 
-module.exports = {getArticles, getCommentsByArticleId};
+
+
+module.exports = {getAllArticles, getArticles, getCommentsByArticleId};
+
