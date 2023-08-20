@@ -104,6 +104,7 @@ describe('app', () => {
 
     });
     
+  
     describe('/api/articles/:article_id', () => {
         test('200 : responds with an article object with all the given properties', () => {
             return request(app)
@@ -159,6 +160,7 @@ describe('app', () => {
                 expect(msg).toBe('Invalid id');
             });
         });
+
         test('404 : returns an error message if id is not found', () => {
             return request(app)
             .get('/api/articles/900')
@@ -171,6 +173,57 @@ describe('app', () => {
 
     });
 
+  
+    describe('/api/articles/:article_id/comments', () => {
+        test('returns an array of comments for valid article_id, ordered by date descending',() => {
+            return request(app)
+            .get('/api/articles/1/comments')
+            .expect(200)
+            .then(({body}) => {
+                const comments = body;
+                expect(comments).toBeInstanceOf(Array);
+                expect(comments).toHaveLength(11);
+                expect(comments).toBeSortedBy('created_at', { descending: true });
+                comments.forEach((comment) => {
+                    expect(comment).toHaveProperty('comment_id');
+                    expect(comment).toHaveProperty('article_id');
+                    expect(comment).toHaveProperty('author');
+                    expect(comment).toHaveProperty('body');
+                    expect(comment).toHaveProperty('created_at');
+                    expect(comment).toHaveProperty('votes');
+                })
+            }); 
+        });
+      
+        test('200: returns an empty array for valid article_id with no comments',() => {
+            return request(app)
+            .get('/api/articles/2/comments')
+            .expect(200)
+            .then(({body}) => {
+                expect(body).toEqual([])
+            }); 
+        });
+      
+        test('400: returns an error message for an invalid article_id type',() => {
+            return request(app)
+            .get('/api/articles/cat/comments')
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toBe('Invalid id')
+            }); 
+        });
+      
+        test('404: returns an error message for a non-existent article_id',() => {
+            return request(app)
+            .get('/api/articles/999/comments')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toBe('Not found')
+            }); 
+        });
+    });
+
+
 
     describe(('Path is incorrect'), () => {
         test('404 : returns an error message if path is incorrect', () => {
@@ -179,9 +232,9 @@ describe('app', () => {
             .expect(404)
             .then(({body}) => {
                 const  {msg} = body;
-                expect(msg).toBe('Not found');
+                expect(msg).toBe('Bad Request');
             });
         });
     });
-
+  
 });

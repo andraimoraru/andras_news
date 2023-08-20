@@ -1,13 +1,9 @@
 const db = require('../db/connection');
 
-const readArticlesById = (article_id, next) => {
-
+const readArticlesById = (article_id) => {
     return db.query(`SELECT * FROM articles WHERE article_id = $1`, [article_id])
     .then(({ rows }) => {   
         return rows[0];
-    })
-    .catch((err) => {
-        next(err);
     });
 };
 
@@ -37,7 +33,20 @@ const readArticles = (request, response, next) => {
     });
 
 };
+const selectCommentsByArticleId = (article_id) => {
+    return db.query(     
+        `SELECT * 
+        FROM comments 
+        WHERE article_id = $1 
+        ORDER BY created_at 
+        DESC;`, [article_id])
+    .then(({ rows }) => {
+        return rows;
+    });
+};
 
-module.exports = {readArticles, readArticlesById};
+
+
+module.exports = {readArticles, readArticlesById, selectCommentsByArticleId};
 
 
