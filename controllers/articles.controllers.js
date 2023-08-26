@@ -1,5 +1,5 @@
 
-const {readArticlesById, readArticles, selectCommentsByArticleId, insertCommentsByArticleId, updateArticleVotes} = require('../models/articles.models');
+const {readArticlesById, readArticles, selectCommentsByArticleId, insertCommentsByArticleId, updateArticleVotes, deleteCommentById} = require('../models/articles.models');
 const {readAllUsers} = require('../models/users.models');
 
 const getArticles = (request, response,next) => {
@@ -111,9 +111,35 @@ const patchArticleVotes = (request, response, next) => {
         .catch((err) => {
             next(err);
         });
+};
+
+const removeCommentById = (request, response, next)=> {
+
+    let { comment_id } = request.params;
+    
+    comment_id = parseInt(comment_id)
+    
+    if(comment_id > 0) {
+
+    } else {
+        return response.status(400)
+        .send({msg: 'Invalid Request'})
+    };
+
+    deleteCommentById(comment_id)
+    .then((res) => {
+        if (res === 0) {
+            return response.status(404)
+            .send({msg: 'comment_id not found'})
+        } 
+        return response.status(204).send()
+    })
+    .catch((err) => {
+        next(err);
+    });
 
 }
 
 
-module.exports = {getAllArticles, getArticles, getCommentsByArticleId, postCommentsByArticleId, patchArticleVotes};
+module.exports = {getAllArticles, getArticles, getCommentsByArticleId, postCommentsByArticleId, patchArticleVotes, removeCommentById};
 
