@@ -321,11 +321,37 @@ describe('app', () => {
             .send({ inc_votes: 100})
             .expect(404)
             .then(({body}) => {
-                expect(body.msg).toBe('Article not found')
+                expect(body.msg).toBe('Article not found');
             });
         });
     });
 
+
+    describe('DELETE /api/comments/:comment_id', () => {
+        test('204 : successfully deletes a comment by its comment_id', () => {
+            return request(app)
+            .delete('/api/comments/1')
+            .expect(204)
+        });
+
+        test('400 : invalid comment_id', () => {
+            return request(app)
+            .delete('/api/comments/banana')
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toBe('Invalid Request')
+            })
+        });
+
+        test('404 : comment_id not found', () => {
+            return request(app)
+            .delete('/api/comments/999')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toBe('comment_id not found')
+            })
+        });
+    });
 
 
     describe(('Path is incorrect'), () => {
