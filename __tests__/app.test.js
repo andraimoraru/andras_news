@@ -14,7 +14,7 @@ beforeEach(() => {
 
 describe('app', () => {
     
-    describe('/api/healthcheck', () => {
+    describe('GET /api/healthcheck', () => {
         test('200 : responds with a status of 200', () => {
             return request(app)
             .get('/api/healthcheck')
@@ -26,7 +26,7 @@ describe('app', () => {
         });
     });
 
-    describe('/api/topics', () => {
+    describe('GET /api/topics', () => {
         test('200 : responds with an array of topic objects', () => {
             return request(app)
             .get('/api/topics')
@@ -43,7 +43,7 @@ describe('app', () => {
         });
     });
 
-    describe('/api', () => {
+    describe('GET /api', () => {
         test('200: responds with an object with all the endpoints available described', () => {
             return request(app)
             .get('/api')
@@ -69,7 +69,7 @@ describe('app', () => {
         });
 
 
-    describe('/api/articles', () => {
+    describe('GET /api/articles', () => {
         test('200 : responds with an array of articles objects with given properties', () => {
             return request(app)
             .get('/api/articles')
@@ -105,7 +105,7 @@ describe('app', () => {
     });
     
   
-    describe('/api/articles/:article_id', () => {
+    describe('GET /api/articles/:article_id', () => {
         test('200 : responds with an article object with all the given properties', () => {
             return request(app)
             .get('/api/articles/1')
@@ -157,7 +157,7 @@ describe('app', () => {
             .expect(400)
             .then(({body}) => {
                 const  {msg} = body;
-                expect(msg).toBe('Invalid id');
+                expect(msg).toBe('Invalid Request');
             });
         });
 
@@ -174,7 +174,7 @@ describe('app', () => {
     });
 
   
-    describe('/api/articles/:article_id/comments', () => {
+    describe('GET /api/articles/:article_id/comments', () => {
         test('returns an array of comments for valid article_id, ordered by date descending',() => {
             return request(app)
             .get('/api/articles/1/comments')
@@ -223,7 +223,7 @@ describe('app', () => {
         });
     });
 
-    describe(('POST'), () => {
+    describe(('POST /api/articles/:article_id/comments'), () => {
         test('201 : returns the posted comment', () => {
             return request(app)
             .post('/api/articles/1/comments')
@@ -284,6 +284,50 @@ describe('app', () => {
     });
 
 
+    describe(('PATCH /api/articles/:article_id'), () => {
+        test('200 : increments vote by 1', () => {
+            return request(app)
+            .patch('/api/articles/1')
+            .send({ inc_votes: 1 })
+            .expect(200)
+            .then(({body}) => {
+                expect(body.article.votes).toBe(101);
+            });
+        });
+
+        test('200 : decrements vote by 100', () => {
+            return request(app)
+            .patch('/api/articles/1')
+            .send({ inc_votes: -100 })
+            .expect(200)
+            .then(({body}) => {
+                expect(body.article.votes).toBe(0);
+            });
+        });
+
+        test('400 : if inc_votes is not provided', () => {
+            return request(app)
+            .patch('/api/articles/1')
+            .send({})
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toBe('Invalid Request');
+            });
+        });
+
+        test('404 : if article_id does not exist', ()=> {
+            return request(app)
+            .patch('/api/articles/999')
+            .send({ inc_votes: 100})
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toBe('Article not found')
+            });
+        });
+    });
+
+
+
     describe(('Path is incorrect'), () => {
         test('404 : returns an error message if path is incorrect', () => {
             return request(app)
@@ -294,6 +338,5 @@ describe('app', () => {
                 expect(msg).toBe('Bad Request');
             });
         });
-    });
-  
+    });  
 });
