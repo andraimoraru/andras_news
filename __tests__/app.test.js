@@ -157,7 +157,7 @@ describe('app', () => {
             .expect(400)
             .then(({body}) => {
                 const  {msg} = body;
-                expect(msg).toBe('Invalid id');
+                expect(msg).toBe('Invalid Request');
             });
         });
 
@@ -294,6 +294,36 @@ describe('app', () => {
                 expect(body.article.votes).toBe(101);
             });
         });
+
+        test('200 : decrements vote by 100', () => {
+            return request(app)
+            .patch('/api/articles/1')
+            .send({ inc_votes: -100 })
+            .expect(200)
+            .then(({body}) => {
+                expect(body.article.votes).toBe(0);
+            });
+        });
+
+        test('400 : if inc_votes is not provided', () => {
+            return request(app)
+            .patch('/api/articles/1')
+            .send({})
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toBe('Invalid Request');
+            });
+        });
+
+        test('404 : if article_id does not exist', ()=> {
+            return request(app)
+            .patch('/api/articles/999')
+            .send({ inc_votes: 100})
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toBe('Article not found')
+            });
+        });
     });
 
 
@@ -308,6 +338,5 @@ describe('app', () => {
                 expect(msg).toBe('Bad Request');
             });
         });
-    });
-  
+    });  
 });

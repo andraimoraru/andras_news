@@ -93,6 +93,17 @@ const patchArticleVotes = (request, response, next) => {
     const { article_id } = request.params;
     let { inc_votes } = request.body;
     inc_votes = +inc_votes;
+
+    if (article_id > 0) {
+        readArticlesById(article_id).then(res => {         
+            if (res === undefined) {
+                return response.status(404).send({status: 404, msg: 'Article not found'});
+            };
+        });
+    } else {
+        return response.status(400).send({status: 400, msg: 'Invalid id'});
+    }
+    
     updateArticleVotes(article_id, inc_votes)
         .then((article) => {
             response.status(200).send({ article });
