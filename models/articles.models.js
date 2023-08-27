@@ -83,6 +83,8 @@ const deleteCommentById = (comment_id) => {
 
 
 
+
+
 module.exports = {readArticles, readArticlesById, selectCommentsByArticleId, insertCommentsByArticleId, updateArticleVotes, deleteCommentById};
 
 
