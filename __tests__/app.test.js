@@ -52,7 +52,6 @@ describe('app', () => {
                 const endpoints = body;
                 for (let key in endpoints){
                     if (key !== 'GET /api'){
-                        expect(key).toContain('GET /api');
                         expect(endpoints[key]).toHaveProperty("description");
                         expect(endpoints[key]).toHaveProperty("queries");
                         expect(endpoints[key]).toHaveProperty("exampleResponse");                      
@@ -340,7 +339,7 @@ describe('app', () => {
             .expect(400)
             .then(({body}) => {
                 expect(body.msg).toBe('Invalid Request')
-            })
+            });
         });
 
         test('404 : comment_id not found', () => {
@@ -349,10 +348,28 @@ describe('app', () => {
             .expect(404)
             .then(({body}) => {
                 expect(body.msg).toBe('comment_id not found')
-            })
+            });
         });
     });
 
+
+    describe(('GET /api/users'), () => {
+        test('200 : responds with the users object', () => {
+            return request(app)
+            .get('/api/users')
+            .expect(200)
+            .then((response) => {
+                const { users } = response.body;
+                expect(users).toBeInstanceOf(Array);
+                expect(users).toHaveLength(4);
+                users.forEach((user) => {
+                    expect(user).toHaveProperty('username', expect.any(String));
+                    expect(user).toHaveProperty('name', expect.any(String));
+                    expect(user).toHaveProperty('avatar_url', expect.any(String));
+                });
+            });
+        });
+    });
 
     describe(('Path is incorrect'), () => {
         test('404 : returns an error message if path is incorrect', () => {

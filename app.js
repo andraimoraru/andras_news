@@ -4,6 +4,7 @@ const { getApi } = require("./controllers/api.controllers")
 const { getTopics } = require('./controllers/topics.controllers');
 const { handle400s, handleCustomErrors } = require("./controllers/errors.controllers");
 const { getArticles, getAllArticles, getCommentsByArticleId, postCommentsByArticleId, patchArticleVotes,removeCommentById } = require("./controllers/articles.controllers");
+const { getAllUsers } = require("./controllers/users.controllers");
 
 
 const app = express();
@@ -26,7 +27,9 @@ app.post('/api/articles/:article_id/comments', postCommentsByArticleId);
 
 app.patch('/api/articles/:article_id', patchArticleVotes);
 
-app.delete('/api/comments/:comment_id', removeCommentById)
+app.delete('/api/comments/:comment_id', removeCommentById);
+
+app.get('/api/users', getAllUsers);
 
 
 app.use(handle400s);
