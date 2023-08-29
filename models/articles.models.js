@@ -8,10 +8,9 @@ const readArticlesById = (article_id) => {
     });
 };
 
-const readArticles = () => {
-
-    return db.query(
-    `SELECT 
+const readArticles = ({topic, sort_by= 'created_at', order='desc'}) => {
+    const values =[];
+    let query = `SELECT 
     articles.author,
     articles.title, 
     articles.article_id, 
@@ -22,10 +21,28 @@ const readArticles = () => {
     COUNT(comments.comment_id)::INTEGER as comment_count 
     FROM articles 
     LEFT JOIN comments 
-    ON articles.article_id = comments.article_id 
-    GROUP BY articles.article_id 
-    ORDER BY articles.created_at
-    DESC;`)
+    ON articles.article_id = comments.article_id`
+
+    if (topic){
+        query += ` WHERE articles.topic = $1`;
+                values.push(topic);
+    }
+
+    query += ` GROUP BY articles.article_id `
+    
+    const sortby = [
+        'title',
+        'topic',
+        'author',
+        'created_at'
+    ]
+
+    sortby.includes(sort_by) ? '' : sort_by = 'created_at'
+    order == 'asc' || order == 'desc' ? '' : order = 'desc'
+
+    query += `ORDER BY ${sort_by} ${order.toUpperCase()};`
+
+    return db.query(query, values)
     .then(({ rows }) => {
         return rows;
     });
