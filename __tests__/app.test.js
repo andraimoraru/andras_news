@@ -144,7 +144,7 @@ describe('app', () => {
             .get('/api/articles/1')
             .expect(200)
             .then((response) => {
-                const properties = ['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url']
+                const properties = ['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url', 'comment_count']
                 properties.forEach((property) => {
                     expect(response.body).toHaveProperty(property);
                 });
