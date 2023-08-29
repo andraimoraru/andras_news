@@ -23,7 +23,7 @@ const getArticles = (request, response,next) => {
 
 
 const getAllArticles = (request, response, next) => {
-    const  query = request.query
+    const  query = request.query;
     readArticles(query)
     .then((articles) => {
         return response.status(200).send({articles});

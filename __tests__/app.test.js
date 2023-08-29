@@ -3,6 +3,7 @@ const request = require("supertest");
 const connection = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data");
+const { toBeTrue } = require("jest-extended");
 
 afterAll(() => {
     return connection.end();
@@ -98,6 +99,39 @@ describe('app', () => {
             .then(({body}) => {
                 const { articles } = body;
                 expect(articles).toBeSortedBy('created_at', { descending: true });
+            });
+        });
+
+        test('200 : articles should be filtered by topic', () => {
+            return request(app)
+            .get('/api/articles?topic=mitch')
+            .expect(200)
+            .then(({body}) => {          
+                const { articles } = body;
+                expect(articles).toBeSortedBy('created_at', { descending: true });
+                expect(articles.every(article => article.topic === 'mitch')).toBe(true);
+            });
+        });
+
+
+        test('200 : articles should be sorted by a given title', () => {
+            return request(app)
+            .get('/api/articles?topic=mitch&sort_by=title&order=asc')
+            .expect(200)
+            .then(({body}) => {          
+                const { articles } = body;
+                expect(articles.every(article => article.topic === 'mitch')).toBe(true);
+                expect(articles).toBeSortedBy('title', { descending: false });
+            });
+        });
+
+        test('200 : articles should be sorted by given queries', () => {
+            return request(app)
+            .get('/api/articles?sort_by=title')
+            .expect(200)
+            .then(({body}) => {          
+                const { articles } = body;
+                expect(articles).toBeSortedBy('title', { descending: true });
             });
         });
 
