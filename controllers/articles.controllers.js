@@ -95,22 +95,27 @@ const patchArticleVotes = (request, response, next) => {
     inc_votes = +inc_votes;
 
     if (article_id > 0) {
-        readArticlesById(article_id).then(res => {         
+        readArticlesById(article_id)
+        .then(res => {    
             if (res === undefined) {
                 return response.status(404).send({status: 404, msg: 'Article not found'});
-            };
-        });
+            } else {
+                updateArticleVotes(article_id, inc_votes)
+                .then((article) => {
+                    response.status(200).send({ article });
+                })
+                .catch((err) => {
+                    next(err);
+                });
+            }
+        })
+        .catch((err) => {
+            next(err);
+        })
     } else {
         return response.status(400).send({status: 400, msg: 'Invalid id'});
     }
     
-    updateArticleVotes(article_id, inc_votes)
-        .then((article) => {
-            response.status(200).send({ article });
-        })
-        .catch((err) => {
-            next(err);
-        });
 };
 
 const removeCommentById = (request, response, next)=> {
